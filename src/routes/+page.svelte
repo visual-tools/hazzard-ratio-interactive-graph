@@ -323,22 +323,15 @@
 			</div>
 		</div>
 
-		<div class="pt-8 pb-6 border-t border-gray-200">
-			<p class="text-sm text-gray-600 leading-relaxed">
-				Caution is needed when viewing this graph as incorrect interpretations could lead to
-				misinformation ___ Additional Cautionary notes__ ___ Close to 1, or CL overlapping__
-			</p>
-		</div>
-
 		<div class="py-6">
 			<div class="flex flex-col">
 				<div class="text-xl font-semibold mb-4">Attributions</div>
 				<ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
 					<li>
-						Click here for associated research papers - link <a
+						Click here for associated research papers - <a
 							class="text-blue-600 underline"
 							href="https://www.bristol.ac.uk/population-health-sciences/centres/ehr/research/-convalescence-long-covid-study"
-							>https://www.bristol.ac.uk/population-health-sciences/centres/ehr/research/-convalescence-long-covid-study</a
+							>link</a
 						>
 					</li>
 					<li>
