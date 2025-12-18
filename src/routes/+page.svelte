@@ -161,10 +161,18 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Investigating health outcomes following COVID-19</title>
+	<meta
+		name="description"
+		content="This interactive visualisation tool displays data from the Convalescence Long Covid research project."
+	/>
+</svelte:head>
+
 <div class="size-full relative flex flex-col box-content">
-	<div class="px-8 py-6">
+	<main class="px-8 py-6">
 		<Root>
-			<div class="flex flex-col gap-4 mb-6">
+			<header class="flex flex-col gap-4 mb-6">
 				<h1 class="text-3xl font-bold">Investigating health outcomes following COVID-19</h1>
 
 				<p class="text-base leading-relaxed text-gray-700">
@@ -173,9 +181,12 @@
 					acute myocardial infarction, depression or type 2 diabetes by clicking on the drop-down
 					menus. Hover over labels (or single click if you are on your phone) for more information.
 				</p>
-			</div>
+			</header>
 
-			<div class="flex flex-col md:flex-row items-start gap-4 mb-6">
+			<nav
+				class="flex flex-col md:flex-row items-start gap-4 mb-6"
+				aria-label="Chart data selection controls"
+			>
 				<OutcomeDropdown
 					data={outcomes}
 					selectedAnalyses={selected_analyses}
@@ -226,11 +237,12 @@
 						selected_analyses = ev.detail;
 					}}
 				/>
-			</div>
+			</nav>
 
-			<div class="bg-red-500 w-full" />
-
-			<div class="flex-1 pr-12 pl-24 py-16 min-h-[64svh] overflow-x-hidden max-w-full">
+			<section
+				class="flex-1 relative pr-12 pl-24 py-16 min-h-[64svh] overflow-x-hidden max-w-full"
+				aria-label="Interactive line chart visualization"
+			>
 				<Chart>
 					<LineChart
 						{yScale}
@@ -251,16 +263,23 @@
 						bind:dataset={selected_dataset}
 					/>
 				</Chart>
-			</div>
+			</section>
 
-			<div class="flex justify-between items-center pt-8 pb-6">
-				<div class="flex flex-col md:flex-row items-start gap-6">
+			<div
+				class="flex justify-between items-center pt-8 pb-6"
+				role="group"
+				aria-label="Chart display options"
+			>
+				<fieldset class="flex flex-col md:flex-row items-start gap-6 border-0 p-0 m-0">
+					<legend class="sr-only">Y-axis scale type</legend>
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input
 							type="radio"
 							value="linear"
 							name="scale-type"
+							aria-label="Linear scale"
 							checked={yScale === scaleLinear}
+							tabindex="0"
 							on:change={(ev) => {
 								const currentTarget = ev.currentTarget;
 								if (currentTarget.checked) {
@@ -276,7 +295,9 @@
 							type="radio"
 							value="logarithmic"
 							name="scale-type"
+							aria-label="Logarithmic scale"
 							checked={yScale === scaleLog}
+							tabindex="0"
 							on:change={(ev) => {
 								const currentTarget = ev.currentTarget;
 								if (currentTarget.checked) {
@@ -286,53 +307,57 @@
 						/>
 						<span class="text-sm font-medium">Logarithmic</span>
 					</label>
-				</div>
+				</fieldset>
 
-				<div class="flex flex-col md:flex-row items-start gap-6">
+				<fieldset class="flex flex-col md:flex-row items-start gap-6 border-0 p-0 m-0">
+					<legend class="sr-only">Chart visualization options</legend>
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input
 							type="checkbox"
+							aria-label="Show legend"
 							checked={showLegend}
 							on:change={(ev) => {
 								showLegend = ev.currentTarget.checked;
 							}}
 						/>
-						<div class="text-sm font-medium">Show legend</div>
+						<span class="text-sm font-medium">Show legend</span>
 					</label>
 
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input
 							type="checkbox"
+							aria-label="Show connecting lines between data points"
 							checked={showConnectingLines}
 							on:change={(ev) => {
 								showConnectingLines = ev.currentTarget.checked;
 							}}
 						/>
-						<div class="text-sm font-medium">Show connecting lines</div>
+						<span class="text-sm font-medium">Show connecting lines</span>
 					</label>
 
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input
 							type="checkbox"
+							aria-label="Show horizontal reference lines"
 							checked={showHorizontalLines}
 							on:change={(ev) => {
 								showHorizontalLines = ev.currentTarget.checked;
 							}}
 						/>
-						<div class="text-sm font-medium">Show horizontal lines</div>
+						<span class="text-sm font-medium">Show horizontal lines</span>
 					</label>
-				</div>
+				</fieldset>
 			</div>
 
-			<div class="py-6">
+			<section class="py-6" aria-labelledby="attributions-heading">
 				<div class="flex flex-col">
-					<div class="text-xl font-semibold mb-4">Attributions</div>
+					<h2 id="attributions-heading" class="text-xl font-semibold mb-4">Attributions</h2>
 					<ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
 						<li>
-							Click here for associated research papers - <a
+							<a
 								class="text-blue-600 underline"
 								href="https://www.bristol.ac.uk/population-health-sciences/centres/ehr/research/-convalescence-long-covid-study"
-								>link</a
+								>Associated research papers from the Convalescence Long Covid Study</a
 							>
 						</li>
 						<li>
@@ -346,173 +371,188 @@
 						</li>
 					</ul>
 				</div>
+			</section>
 
-				<div class="flex flex-col pt-8 mt-6 border-t border-gray-200">
-					<div class="text-xl font-semibold mb-5">FAQs</div>
-					<div class="space-y-3">
-						<Collapsible.Root>
-							<Collapsible.Trigger
-								class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+			<section
+				class="flex flex-col pt-8 mt-6 border-t border-gray-200"
+				aria-labelledby="faqs-heading"
+			>
+				<h2 id="faqs-heading" class="text-xl font-semibold mb-5">Frequently Asked Questions</h2>
+				<div class="space-y-3">
+					<Collapsible.Root>
+						<Collapsible.Trigger
+							class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+							aria-label="What does "history of COVID-19" mean?"
+						>
+							<span class="font-medium text-sm" aria-hidden="true"
+								>What does "history of COVID-19" mean?</span
 							>
-								<span class="font-medium text-sm">What does "history of COVID-19" mean?</span>
-								<svg
-									class="w-5 h-5 transition-transform"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 9l-7 7-7-7"
-									/>
-								</svg>
-							</Collapsible.Trigger>
-							<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
-								<p>
-									When we talk about <em>history of COVID-19</em>, we simply mean whether the people
-									in the analysis had COVID-19 before our study period began.
-								</p>
-								<p>
-									For the vaccinated and unvaccinated cohorts, our study starts on 18 June 2021, the
-									date when all adults became eligible for vaccination. Some people had already had
-									COVID-19 before this date. We looked at this subgroup separately to see if having
-									COVID-19 before affected the association between COVID-19 and the health outcomes
-									we measured.
-								</p>
-								<p>
-									For the pre-vaccination cohort, the study begins on 1 January 2020, at the very
-									start of the pandemic. As COVID-19 didn't exist before then, no one could have had
-									a prior history of COVID-19 in this cohort.
-								</p>
-							</Collapsible.Content>
-						</Collapsible.Root>
+							<svg
+								class="w-5 h-5 transition-transform"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
+							<p>
+								When we talk about <em>history of COVID-19</em>, we simply mean whether the people
+								in the analysis had COVID-19 before our study period began.
+							</p>
+							<p>
+								For the vaccinated and unvaccinated cohorts, our study starts on 18 June 2021, the
+								date when all adults became eligible for vaccination. Some people had already had
+								COVID-19 before this date. We looked at this subgroup separately to see if having
+								COVID-19 before affected the association between COVID-19 and the health outcomes we
+								measured.
+							</p>
+							<p>
+								For the pre-vaccination cohort, the study begins on 1 January 2020, at the very
+								start of the pandemic. As COVID-19 didn't exist before then, no one could have had a
+								prior history of COVID-19 in this cohort.
+							</p>
+						</Collapsible.Content>
+					</Collapsible.Root>
 
-						<Collapsible.Root>
-							<Collapsible.Trigger
-								class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+					<Collapsible.Root>
+						<Collapsible.Trigger
+							class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+							aria-label="What is the difference between the pre-vaccination and unvaccinated cohorts?"
+						>
+							<span class="font-medium text-sm" aria-hidden="true"
+								>What is the difference between the pre-vaccination and unvaccinated cohorts?</span
 							>
-								<span class="font-medium text-sm"
-									>What is the difference between the pre-vaccination and unvaccinated cohorts?</span
-								>
-								<svg
-									class="w-5 h-5 transition-transform"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 9l-7 7-7-7"
-									/>
-								</svg>
-							</Collapsible.Trigger>
-							<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
-								<p>
-									In both groups, people had not received any COVID-19 vaccines at the time they
-									were diagnosed with COVID-19. The key difference is when they were diagnosed and,
-									therefore, which variant they were most likely exposed to.
-								</p>
-								<p>
-									In the pre-vaccination cohort, people were diagnosed with COVID-19 between 1
-									January 2020 and the date they became eligible for vaccination (or the date they
-									were vaccinated, if that happened earlier). During this period, the main variants
-									circulating were the original (wild-type) virus and the Alpha variant.
-								</p>
-								<p>
-									In the unvaccinated cohort, people were diagnosed with COVID-19 between 18 June
-									2021 and 14 December 2021 (the date that Omicron became dominant in the UK). At
-									this time, the main variant circulating was the Delta variant.
-								</p>
-							</Collapsible.Content>
-						</Collapsible.Root>
+							<svg
+								class="w-5 h-5 transition-transform"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
+							<p>
+								In both groups, people had not received any COVID-19 vaccines at the time they were
+								diagnosed with COVID-19. The key difference is when they were diagnosed and,
+								therefore, which variant they were most likely exposed to.
+							</p>
+							<p>
+								In the pre-vaccination cohort, people were diagnosed with COVID-19 between 1 January
+								2020 and the date they became eligible for vaccination (or the date they were
+								vaccinated, if that happened earlier). During this period, the main variants
+								circulating were the original (wild-type) virus and the Alpha variant.
+							</p>
+							<p>
+								In the unvaccinated cohort, people were diagnosed with COVID-19 between 18 June 2021
+								and 14 December 2021 (the date that Omicron became dominant in the UK). At this
+								time, the main variant circulating was the Delta variant.
+							</p>
+						</Collapsible.Content>
+					</Collapsible.Root>
 
-						<Collapsible.Root>
-							<Collapsible.Trigger
-								class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+					<Collapsible.Root>
+						<Collapsible.Trigger
+							class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+							aria-label="What is the coverage of the analysis?"
+						>
+							<span class="font-medium text-sm" aria-hidden="true"
+								>What is the coverage of the analysis?</span
 							>
-								<span class="font-medium text-sm">What is the coverage of the analysis?</span>
-								<svg
-									class="w-5 h-5 transition-transform"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 9l-7 7-7-7"
-									/>
-								</svg>
-							</Collapsible.Trigger>
-							<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
-								<p>
-									Our <em>main</em> analysis includes all adults aged 18 to 110 who were registered
-									with a GP practice in England that uses TPP SystmOne software at the start of the
-									study. To be included, people also needed to have been registered for at least six
-									months beforehand and have basic information recorded, such as age and sex. TPP
-									SystmOne is used by about 40% of GP practices in England, and the data is broadly
-									representative of the English population (see
-									<a
-										href="https://doi.org/10.12688/wellcomeopenres.18010.1"
-										class="text-blue-600 underline">doi:10.12688/wellcomeopenres.18010.1</a
-									>).
-								</p>
-								<p>
-									The subgroup analyses (for example, <strong>Ethnicity: Black</strong> or
-									<strong>Sex: Female</strong>) are drawn from this same population. Because each
-									subgroup includes only the people who fit that specific characteristic, their
-									sample sizes are smaller than in the main analysis. For instance, the
-									<em>Sex: Female</em> group includes roughly half of the main population, while subgroups
-									defined by ethnicity or other factors may be much smaller.
-								</p>
-							</Collapsible.Content>
-						</Collapsible.Root>
+							<svg
+								class="w-5 h-5 transition-transform"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
+							<p>
+								Our <em>main</em> analysis includes all adults aged 18 to 110 who were registered
+								with a GP practice in England that uses TPP SystmOne software at the start of the
+								study. To be included, people also needed to have been registered for at least six
+								months beforehand and have basic information recorded, such as age and sex. TPP
+								SystmOne is used by about 40% of GP practices in England, and the data is broadly
+								representative of the English population (see
+								<a
+									href="https://doi.org/10.12688/wellcomeopenres.18010.1"
+									class="text-blue-600 underline">OpenSAFELY representativeness study</a
+								>).
+							</p>
+							<p>
+								The subgroup analyses (for example, <strong>Ethnicity: Black</strong> or
+								<strong>Sex: Female</strong>) are drawn from this same population. Because each
+								subgroup includes only the people who fit that specific characteristic, their sample
+								sizes are smaller than in the main analysis. For instance, the
+								<em>Sex: Female</em> group includes roughly half of the main population, while subgroups
+								defined by ethnicity or other factors may be much smaller.
+							</p>
+						</Collapsible.Content>
+					</Collapsible.Root>
 
-						<Collapsible.Root>
-							<Collapsible.Trigger
-								class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+					<Collapsible.Root>
+						<Collapsible.Trigger
+							class="flex items-center justify-between w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+							aria-label="Why is there sometimes an uptick in hazard ratio at the end of the plot?"
+						>
+							<span class="font-medium text-sm" aria-hidden="true"
+								>Why is there sometimes an uptick in hazard ratio at the end of the plot?</span
 							>
-								<span class="font-medium text-sm"
-									>Why is there sometimes an uptick in hazard ratio at the end of the plot?</span
-								>
-								<svg
-									class="w-5 h-5 transition-transform"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 9l-7 7-7-7"
-									/>
-								</svg>
-							</Collapsible.Trigger>
-							<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
-								<p>
-									A rise in the hazard ratio near the end of the plot should be interpreted with
-									caution. This can happen because fewer events are recorded in that final time
-									period. As time goes on, the number of people included in the analysis naturally
-									becomes smaller — for example, some may have already experienced the outcome,
-									died, or left their GP practice. With fewer people and fewer events, the estimates
-									become less stable, which can make the hazard ratio appear to rise even if there's
-									no real change in risk.
-								</p>
-							</Collapsible.Content>
-						</Collapsible.Root>
-					</div>
+							<svg
+								class="w-5 h-5 transition-transform"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</Collapsible.Trigger>
+						<Collapsible.Content class="px-4 py-3 text-sm text-gray-700 space-y-3">
+							<p>
+								A rise in the hazard ratio near the end of the plot should be interpreted with
+								caution. This can happen because fewer events are recorded in that final time
+								period. As time goes on, the number of people included in the analysis naturally
+								becomes smaller — for example, some may have already experienced the outcome, died,
+								or left their GP practice. With fewer people and fewer events, the estimates become
+								less stable, which can make the hazard ratio appear to rise even if there's no real
+								change in risk.
+							</p>
+						</Collapsible.Content>
+					</Collapsible.Root>
 				</div>
-			</div>
+			</section>
 		</Root>
-	</div>
+	</main>
 </div>
